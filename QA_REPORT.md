@@ -168,3 +168,99 @@ page-level horizontal overflow at any tested width, the email-wrap fix holds, an
 every fact on the live site traces to `BUILD_BRIEF.md`'s Allowed Facts with no
 fabrication. One non-blocking advisory (O2 Centre/Finchley Road detail) noted
 above. Ready to proceed to FIX+DEPLOY+DRAFT.
+
+---
+
+## FIX+DEPLOY phase — client feedback fix pass (2026-07-09)
+
+Real feedback from Alex after reviewing the live deployed site (two issues):
+1. The alumni-placements section on the homepage ("table of all the places
+   students have been accepted to") had a bottom row that looked empty/out of
+   place.
+2. The homepage had no images at all and read as cold/harsh ("the purples are
+   just a bit mean").
+
+### Issue 1 — "empty bottom row" root cause and fix
+Root cause confirmed via live DOM measurement, not guesswork: `.placements` used
+CSS Grid (`grid-template-columns: repeat(auto-fit, minmax(150px, 1fr))`) with 7
+real items (all 7 are genuine `Allowed Facts`, nothing missing/fabricated — this
+was a pure layout bug, not missing data). At the container's actual computed
+width (`max-width: 1080px` minus padding ≈ 1032px), auto-fit resolves to 6
+columns. 7 items into 6 columns leaves a last row with only 1 item — CSS Grid
+reserves the other 5 cells in that row as empty grid tracks, which render as
+bare/translucent boxes (the container's `rgba(255,255,255,0.14)` background
+showing through) with no content — exactly the "entire bottom row... unfilled"
+Alex described.
+
+**Fix (shared CSS/token level, per AGENTS.md step 8):** changed `.placements`
+from CSS Grid to `display:flex; flex-wrap:wrap` with each child `flex: 1 1
+150px`. Flexbox only lays out actual children — a partial last line's items
+grow to fill the row instead of leaving reserved empty cells behind. No HTML
+changed, no alumni-placement fact removed (checked `BUILD_BRIEF.md` first —
+all 7 items are verified facts, there was no 8th fact missing to fill an empty
+cell with).
+
+**Re-verification (live, via `preview_eval`, not just code-reading):**
+- Desktop 1280px: row 1 = 6 items × 171px (fills full container width, no
+  gaps); row 2 = 1 item ("Madrid Conservatory") now stretched to the full
+  1030px row width — no empty cells, confirmed via `getBoundingClientRect()`
+  on every `.placements > div`.
+- Tablet 768px: row 1 = 4 items × 175px; row 2 = 3 items × 234px each (full
+  row width) — same pattern, confirmed live.
+- Mobile 375px: 2-column layout, last row (single item) spans full width —
+  confirmed via screenshot.
+- Screenshot (375px) shows a clean, intentional-looking final row with no
+  dangling empty boxes.
+
+### Issue 2 — homepage photo
+`BUILD_BRIEF.md`'s prior "ship text/CSS-only" decision only checked
+`/wp-content/uploads/2017/06/` and the business's Facebook/Instagram. This pass
+found an un-checked source still within AGENTS.md's rules (the business's own
+site): a WordPress photo gallery (`bwg_gallery` plugin) discoverable via
+`wp-sitemap-posts-bwg_gallery-1.xml` → `/bwg_gallery/main/`. It holds ~30 real
+photos. Most (the `DSC_NNNNw/s.jpg` recital-stage series) carry an in-frame
+`www.osawahorowitzmediaproductions.com` watermark — a third-party
+photographer/videographer credit — and were rejected per AGENTS.md's explicit
+watermark-check rule. Two files (`09072017-01.jpg`, `09072017-02.jpg`, 800x600,
+a different filename pattern from the photographer's series) had no watermark
+on individual inspection (full frame + top/bottom-band crops checked).
+
+Selected `09072017-01.jpg` — four students at the ballet barre doing pointe
+work in a studio with stained-glass windows and mirrors — saved as
+`images/barre-practice.jpg`. Placed in a new `.hero-grid` two-column layout
+(text left, photo right on desktop/tablet; photo below text on mobile),
+directly beside the hero copy rather than as a background, so it adds warmth
+without needing to re-litigate the hero's text contrast.
+
+**Re-verification (live, via `preview_eval`):**
+- Contrast audit (shared `contrast-audit.js`): 46 text nodes checked at both
+  1280px and 375px, **0 violations** at both widths. Same `needsManualCheck`
+  hero-gradient entries as before (script can't resolve the oklch gradient),
+  now including the new `figcaption` — its color is `var(--rose-light)`
+  (`#e7c3bf`), already hand-verified in the BUILD-phase QA above at ≈8.7:1
+  against the gradient's lightest stop, comfortably AA.
+- Upscale audit (shared `upscale-audit.js`) at 375px/768px/1280px: 1 image
+  checked, **0 violations, 0 brokenImages, 0 aspectMismatches** at all three
+  widths (native 800x600, rendered well under the 1.3x gate at every
+  breakpoint).
+- Overflow: `document.documentElement.scrollWidth === clientWidth` at 375px
+  (375/375) and 768px (753/753, scrollbar gutter only) — no new horizontal
+  overflow introduced by the hero-grid layout.
+- Screenshots (mobile 375px, both above-the-fold hero and the photo/caption
+  further down) confirm a warm, legible, on-brand result — the photo softens
+  the dark curtain-gradient hero as intended, no layout breakage.
+- classes.html and contact.html are unaffected (neither uses `.hero-grid` or
+  `.placements`); not re-run since no shared rule they use was touched.
+
+### Fixed Verification
+| Issue | Fix | Recheck result |
+|---|---|---|
+| `.placements` (homepage alumni-placement section) left a mostly-empty last row at common viewport widths because CSS Grid reserves unfilled cells in a partial last row | Switched `.placements` from `grid` to `flex-wrap` with `flex: 1 1 150px` children | Live-confirmed at 1280px/768px/375px: last row's item(s) now grow to fill the full row width, zero empty cells, screenshot-confirmed at mobile |
+| Homepage had zero images, read as cold/harsh per client feedback | Added `images/barre-practice.jpg` (real, unwatermarked, sourced from the school's own `bwg_gallery` photo gallery) to a new hero `.hero-grid` two-column layout | Contrast: 0/46 violations at 1280px+375px. Upscale: 0 violations/broken/mismatches at 375/768/1280px. Overflow: unaffected. Screenshot-confirmed at mobile and desktop. |
+
+### Verdict (FIX+DEPLOY phase)
+**PASS.** Both client-reported issues traced to a real, specific root cause
+(not guessed at), fixed at the shared CSS level, and independently
+re-verified live against the shared contrast and upscale audit scripts at
+mobile/tablet/desktop — 0 violations, 0 broken images, no new overflow. Ready
+to deploy.
