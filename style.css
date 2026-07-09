@@ -13,7 +13,7 @@
   --rose-light: #e7c3bf;
   --cream: #f7f2ea;
   --cream-dim: #ede4d6;
-  --gold: #8a611f;
+  --gold: #7a5518;
   --radius: 2px;
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -25,6 +25,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -34,6 +35,7 @@ body {
   background: var(--cream);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 ::selection {
@@ -82,9 +84,24 @@ img {
   position: sticky;
   top: 0;
   z-index: 50;
+  border-bottom: 1px solid var(--cream-dim);
+}
+
+/* backdrop-filter/filter on an element creates a new containing block for
+   position:fixed descendants (CSS Filter Effects spec) -- putting it
+   directly on .site-header broke the full-viewport-height off-canvas
+   .main-nav on mobile (it was sizing/positioning relative to the ~76-100px
+   header box instead of the viewport). Applying it to this ::before instead
+   keeps the glass-blur look without creating that containing block for
+   .main-nav, since .main-nav is a sibling of this pseudo-element, not its
+   descendant. */
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
   background: color-mix(in oklch, var(--cream) 92%, transparent);
   backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--cream-dim);
 }
 
 .site-header .container {
@@ -455,6 +472,11 @@ details.faq p {
   padding: 2.5rem;
   border-radius: var(--radius);
   max-width: 560px;
+  overflow-wrap: break-word;
+}
+
+.contact-card .eyebrow {
+  color: var(--gold);
 }
 
 .contact-card a.email {

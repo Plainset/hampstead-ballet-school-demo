@@ -43,25 +43,52 @@ Keep this compact. Add only sourced facts and assets actually used or deliberate
 |---|---|---|---|---|---|---|
 | (none used) | — | — | — | — | — | — |
 
-No photographic assets used this pass. Direct download of the two homepage images
-(banner-website.jpg, home_img.jpg) from hampsteadballetsch.co.uk failed repeatedly with
-TLS "Connection reset by peer" (curl exit 35) during the build window — likely
-server-side throttling from concurrent agent traffic in this batch run. Real FB/IG class
-photos mentioned in LEADS.md were not attempted this pass due to the 12-minute time box.
-Site built as clean typographic/CSS design (no fabricated or mismatched stock photos),
-per AGENTS.md guidance to cut images rather than force a mismatch. **Follow-up:** a later
-pass should retry pulling banner-website.jpg / home_img.jpg and the school's own FB/IG
-class photos (owner-uploaded only) and slot them into the hero and gallery sections.
+**Final decision (2026-07-09, QA-completion pass): ship text/CSS-only, no photography.**
+This was re-attempted properly this pass, not left on the earlier TLS excuse:
+
+- The earlier "TLS Connection reset by peer" was confirmed transient — `curl` succeeded
+  this pass on the first retry. Both original homepage images were located (the
+  earlier build guessed the wrong path; the real paths are under
+  `/wp-content/uploads/2017/06/`) and downloaded successfully:
+  - `banner-website.jpg` (1100x200, real resolution) — inspected and REJECTED. It is
+    the school's actual dated 2017 WordPress banner graphic: a flashy gradient-text
+    logo reading "Hampstead Ballet School" with a phone number "07764 587 851" baked
+    into the image, plus keyword text ("Children from 2+ / Teenagers / Adults all
+    levels"). This is a banner/logo graphic, not a photo, and using it would visually
+    reproduce the exact dated look the pitch hook is built around replacing — self-
+    defeating for a redesign demo. (Note: the phone number visible in this graphic is
+    NOT independently verified as current/live — do not add it to Allowed Facts or
+    Contact without a fresh confirmation; flagged here only as a discovery, not a claim.)
+  - `home_img.jpg` — only 200x215 native pixels. Far too small to display anywhere on
+    a modern site without failing the upscale audit (any use above ~260px width
+    already exceeds the 1.3x gate), and its content (a professional-looking pas de
+    deux stage pose) reads more like stock/press photography than a verified photo of
+    this school's own students — no clear content-match confirmation was possible at
+    this size. Rejected per AGENTS.md's "cut rather than force a mismatch" guidance.
+- Checked the business's own social accounts (the only other AGENTS.md-sanctioned
+  source): Instagram (@hampstead_ballet_school, found via the homepage) has a public
+  post grid visible without login (50 posts, 203 followers) but the account is
+  stale — last visible activity is a New Year's greeting graphic, with the bulk of
+  real content dated 2017-2021. Individual/full-resolution photos require an
+  Instagram login to open, which is a prohibited action (no account creation/login)
+  — so no full-res file could be retrieved from IG this pass. Facebook
+  (facebook.com/pages/Hampstead-Ballet-School/193090200706496) turned out to be an
+  unclaimed "Unofficial Page" auto-generated listing: 0 followers, "No posts yet" —
+  no content exists there at all.
+- No usable, rights-clear, on-brand photo asset could be retrieved through any
+  AGENTS.md-sanctioned channel after this real attempt. Site ships as the existing
+  clean typographic/CSS design (stage-curtain gradient motif, alumni-placement
+  prestige strip) with zero `<img>` tags — confirmed via QA_REPORT.md. This is a
+  final decision for this build, not an open follow-up: a future pass could revisit
+  only if someone obtains an Instagram login or the school shares photos directly.
 
 ## Design Notes
 - Palette: deep navy/blackboard (#1a1f2e family) + warm blush/rose gold accent (#d9a5a0 family) + cream (#f7f3ee) — evokes stage curtains and pointe-shoe satin rather than generic pastel-pink "kids dance" cliche, fits the prestige/serious-training angle.
-- Image layout pattern: N/A this pass (no images) — CSS defaults (aspect-ratio patterns) documented for future asset drop-in.
-- Risk notes: no imagery is the main gap; site leans on typography, a subtle CSS "stage curtain" motif, and the alumni-placement fact for visual/narrative interest instead.
+- Image layout pattern: N/A — final decision is text/CSS-only, see Asset Manifest.
+- Risk notes: no imagery is the main gap vs. a normal build in this pipeline; site leans on typography, a subtle CSS "stage curtain" motif, and the alumni-placement fact for visual/narrative interest instead. This is a considered final decision, not an oversight — see Asset Manifest for the full sourcing attempt.
 
 ## Builder QA
-- Contrast: pending (see QA_REPORT.md)
-- Upscale mobile: N/A — no images placed
-- Upscale tablet: N/A — no images placed
-- Upscale desktop: N/A — no images placed
+- Contrast: PASS — 0 violations on all 3 pages at desktop (1280px) and mobile (375px); see QA_REPORT.md
+- Upscale mobile/tablet/desktop: N/A — confirmed zero `<img>` tags across all 3 pages (grep + live DOM check)
 - Broken images: N/A — no images placed
-- Manual checks: pending (see QA_REPORT.md)
+- Manual checks: complete — see QA_REPORT.md
