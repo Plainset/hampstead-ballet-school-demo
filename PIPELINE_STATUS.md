@@ -2,8 +2,8 @@
 
 Operational handoff only. `LEADS.md` and `OUTREACH_LOG.md` remain the source of truth.
 
-- Current phase: REVIEW — complete. Independent verification confirms PASS. Ready to
-  hand off to FIX+DEPLOY+DRAFT.
+- Current phase: DEPLOY — complete. Site is live. Next step is outreach drafting
+  (top-level session's job — see Outreach state below).
 - Last trusted commit: `c3a7e58` ("QA fix pass: contrast, mobile nav bleed-through,
   horizontal overflow"), on top of `47b4614` ("Initial build"). Working tree is clean
   — nothing uncommitted as of this handoff.
@@ -33,21 +33,25 @@ Operational handoff only. `LEADS.md` and `OUTREACH_LOG.md` remain the source of 
     **Final decision: ship text/CSS-only.** This is documented in BUILD_BRIEF.md as a
     closed decision, not an open TODO.
 - Next exact action:
-  1. Proceed to FIX+DEPLOY+DRAFT: no fixes required first (REVIEW found zero blocking
-     issues). Create the public GitHub repo `hampstead-ballet-school-demo` under
-     `Plainset`, push `master`, enable Pages (`source[branch]=main` or `master` —
-     match whatever this repo's default branch is — `source[path]=/`), and confirm
-     the live URL actually loads before reporting deployed, per AGENTS.md step 6.
-  2. Then draft outreach per AGENTS.md step 7 (email to `info@hampsteadballetsch.co.uk`,
-     leading with the observation that the current 2017-era site undersells the
-     alumni-placement prestige story), and log it in `OUTREACH_LOG.md` (top-level
-     session's job, not this repo's).
+  1. Deploy — DONE (this pass). Public GitHub repo `Plainset/hampstead-ballet-school-demo`
+     created, `master` pushed (matches repo default branch), Pages enabled
+     (`source[branch]=master`, `source[path]=/`), build confirmed `status: built`,
+     and all 3 pages independently confirmed loading (HTTP 200 + correct `<title>`
+     on each of `/`, `classes.html`, `contact.html`) via `curl`.
+  2. Remaining: draft outreach per AGENTS.md step 7 (email to
+     `info@hampsteadballetsch.co.uk`, leading with the observation that the current
+     2017-era site undersells the alumni-placement prestige story) — top-level
+     session's job this round, not this repo's. Log it in `OUTREACH_LOG.md`
+     (top-level session's job, not this repo's).
   3. Optional, non-blocking: consider sourcing/confirming the "Finchley Road" detail
      for the O2 Centre venue into `BUILD_BRIEF.md`'s Allowed Facts, or trim it back to
      "O2 Centre" — see QA_REPORT.md REVIEW-phase Verdict for detail. Does not block
      deploy.
-- Deploy URL: none yet — REVIEW does not deploy; deployment is the next phase's job.
-- Outreach state: none — no email drafted or sent. Not in scope for this phase.
+- Deploy URL: **https://plainset.github.io/hampstead-ballet-school-demo/** — confirmed
+  live 2026-07-09: GitHub Pages build status `built`, all 3 pages (`/`, `classes.html`,
+  `contact.html`) return HTTP 200 with correct page titles.
+- Outreach state: none sent yet — not drafted from this repo this pass (top-level
+  session is drafting directly). Not in scope for this phase's edits.
 - Flags for Alex:
   - This build ships with no photography at all, by considered final decision (see
     BUILD_BRIEF.md). The alumni-placement prestige angle (Royal Ballet School,
