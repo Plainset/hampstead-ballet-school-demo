@@ -2,12 +2,11 @@
 
 Operational handoff only. `LEADS.md` and `OUTREACH_LOG.md` remain the source of truth.
 
-- Current phase: BUILD — complete. QA_REPORT.md verdict is PASS. Ready to hand off to REVIEW.
-- Last trusted commit: see git log in this repo. A new commit is still needed after this
-  handoff covering: `--gold` darkening, `.contact-card .eyebrow` fix, the `.site-header`
-  backdrop-filter/containing-block fix, `overflow-x:hidden` on html/body, `overflow-wrap`
-  on `.contact-card`, and this documentation update (BUILD_BRIEF.md, QA_REPORT.md, this
-  file) — see Next exact action.
+- Current phase: REVIEW — complete. Independent verification confirms PASS. Ready to
+  hand off to FIX+DEPLOY+DRAFT.
+- Last trusted commit: `c3a7e58` ("QA fix pass: contrast, mobile nav bleed-through,
+  horizontal overflow"), on top of `47b4614` ("Initial build"). Working tree is clean
+  — nothing uncommitted as of this handoff.
 - State as of this pass:
   - All contrast violations found (both carried-over and newly discovered) are fixed
     and re-verified live via `contrast-audit.js` on all 3 pages at both 1280px and
@@ -34,14 +33,20 @@ Operational handoff only. `LEADS.md` and `OUTREACH_LOG.md` remain the source of 
     **Final decision: ship text/CSS-only.** This is documented in BUILD_BRIEF.md as a
     closed decision, not an open TODO.
 - Next exact action:
-  1. Review the diff in `style.css` (six small, targeted changes — see QA_REPORT.md
-     Fixed Verification table for the full list) and commit it in this repo.
-  2. Hand off to REVIEW phase per `.pipeline/checklists/REVIEW.md` — an independent
-     reviewer should still spot-check the blocking-issue fixes rather than take this
-     report on faith, per AGENTS.md's "a reviewer may use the report as a map, but
-     still verifies blocking checks independently."
-- Deploy URL: none — **do not deploy from BUILD phase**. No GitHub repo/Pages created
-  yet. Deployment is a REVIEW/FIX+DEPLOY+DRAFT-phase action, not in scope here.
+  1. Proceed to FIX+DEPLOY+DRAFT: no fixes required first (REVIEW found zero blocking
+     issues). Create the public GitHub repo `hampstead-ballet-school-demo` under
+     `Plainset`, push `master`, enable Pages (`source[branch]=main` or `master` —
+     match whatever this repo's default branch is — `source[path]=/`), and confirm
+     the live URL actually loads before reporting deployed, per AGENTS.md step 6.
+  2. Then draft outreach per AGENTS.md step 7 (email to `info@hampsteadballetsch.co.uk`,
+     leading with the observation that the current 2017-era site undersells the
+     alumni-placement prestige story), and log it in `OUTREACH_LOG.md` (top-level
+     session's job, not this repo's).
+  3. Optional, non-blocking: consider sourcing/confirming the "Finchley Road" detail
+     for the O2 Centre venue into `BUILD_BRIEF.md`'s Allowed Facts, or trim it back to
+     "O2 Centre" — see QA_REPORT.md REVIEW-phase Verdict for detail. Does not block
+     deploy.
+- Deploy URL: none yet — REVIEW does not deploy; deployment is the next phase's job.
 - Outreach state: none — no email drafted or sent. Not in scope for this phase.
 - Flags for Alex:
   - This build ships with no photography at all, by considered final decision (see
@@ -50,8 +55,8 @@ Operational handoff only. `LEADS.md` and `OUTREACH_LOG.md` remain the source of 
   - While inspecting the school's own current banner image for reuse, it surfaced a
     phone number ("07764 587 851") baked into that graphic. This is **not** verified
     as current/live and was **not** added to BUILD_BRIEF.md's Allowed Facts or used
-    anywhere on the demo site — flagging only in case it's useful context for outreach
-    later, since the original build pass had recorded "no phone number listed."
+    anywhere on the demo site (independently confirmed absent via grep during REVIEW)
+    — flagging only in case it's useful context for outreach later.
   - Email `info@hampsteadballetsch.co.uk` remains the only verified contact channel.
   - Do not touch `LEADS.md`/`OUTREACH_LOG.md` from this repo; the top-level session
     owns those.
